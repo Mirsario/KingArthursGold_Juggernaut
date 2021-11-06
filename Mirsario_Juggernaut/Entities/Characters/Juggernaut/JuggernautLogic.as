@@ -54,7 +54,7 @@ void SetState(CBlob@ this, JuggernautInfo@ juggernaut, JuggernautStates state, b
 //Yes, really.
 void SetState2(CBlob@ this, JuggernautInfo@ juggernaut, u8 state, bool reset = true)
 {
-	if(!reset && juggernaut.state == state) {
+	if (!reset && juggernaut.state == state) {
 		return;
 	}
 
@@ -62,7 +62,7 @@ void SetState2(CBlob@ this, JuggernautInfo@ juggernaut, u8 state, bool reset = t
 	juggernaut.state = state;
 	juggernaut.stateStartTime = getGameTime();
 
-	if(juggernaut.state >= 0 && juggernaut.state < states.length) {
+	if (juggernaut.state >= 0 && juggernaut.state < states.length) {
 		states[juggernaut.state].OnActivate(this);
 	}
 }
@@ -136,14 +136,15 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 	}
 }
 
-void onTick(CBlob@ this) {
+void onTick(CBlob@ this)
+{
 	JuggernautInfo@ juggernaut;
 
 	if (!this.get("JuggernautInfo", @juggernaut)) {
 		return;
 	}
 
-	if(juggernaut.state >= 0 && juggernaut.state < states.length) {
+	if (juggernaut.state >= 0 && juggernaut.state < states.length) {
 		states[juggernaut.state].UpdateLogic(this);
 	}
 
@@ -155,8 +156,8 @@ void onTick(CBlob@ this) {
 		ClearActorLimit(this);
 	}
 
-	if(juggernaut.state != juggernaut.prevState) {
-		if(getNet().isServer()) {
+	if (juggernaut.state != juggernaut.prevState) {
+		if (getNet().isServer()) {
 			//print("synchronizing state!");
 			CBitStream stream;
 			
@@ -170,22 +171,20 @@ void onTick(CBlob@ this) {
 	}
 }
 
-bool IsKnocked(CBlob@ blob) {
+bool IsKnocked(CBlob@ blob)
+{
 	return blob.exists("knocked") && blob.get_u8("knocked") > 0;
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream@ stream) {
+void onCommand(CBlob@ this, u8 cmd, CBitStream@ stream)
+{
 	JuggernautInfo@ juggernaut;
 
 	if (!this.get("JuggernautInfo", @juggernaut)) {
 		return;
 	}
 	
-	//printf("got some packet (" + cmd + ")");
-
 	if (cmd == this.getCommandID("syncState")) {
-		//printf("it's syncState packet");
-		
 		if (!getNet().isServer()) {
 			u8 state = stream.read_u8();
 
@@ -193,13 +192,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ stream) {
 
 			juggernaut.stateStartTime = stream.read_u32();
 		}
-	} else {
-		//printf("syncState packet would be " + this.getCommandID("syncState"));
 	}
 	
 	if (cmd == this.getCommandID("grabbedSomeone")) {
-		//printf("it's grabbedSomeone packet");
-
 		this.set_string("grabbedEnemy", stream.read_string());
 
 		SetState(@this, @juggernaut, JuggernautStates::Holding);
@@ -221,12 +216,11 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ stream) {
 				}
 			}
 		}
-	} else {
-		//printf("grabbedSomeone packet would be " + this.getCommandID("grabbedSomeone"));
 	}
 }
 
-float onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, float damage, CBlob@ hitterBlob, u8 customData) {
+float onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, float damage, CBlob@ hitterBlob, u8 customData)
+{
 	if (this.hasTag("invincible")) {
 		return 0.0f;
 	}
@@ -234,7 +228,8 @@ float onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, float damage, CBlob@ 
 	return damage;
 }
 
-void onDie(CBlob@ this) {
+void onDie(CBlob@ this)
+{
 	if (!getNet().isServer()) {
 		return;
 	}
@@ -282,7 +277,8 @@ void onDie(CBlob@ this) {
 }
 
 //a little push forward
-void pushForward(CBlob@ this, float normalForce, float pushingForce, float verticalForce) {
+void pushForward(CBlob@ this, float normalForce, float pushingForce, float verticalForce)
+{
 	float facing_sign = this.isFacingLeft() ? -1.0f: 1.0f;
 	bool pushing_in_facing_direction = (facing_sign < 0.0f && this.isKeyPressed(key_left)) || (facing_sign > 0.0f && this.isKeyPressed(key_right));
 	float force = normalForce;
@@ -295,7 +291,8 @@ void pushForward(CBlob@ this, float normalForce, float pushingForce, float verti
 }
 
 // Blame Fuzzle.
-bool canHit(CBlob@ this, CBlob@ b) {
+bool canHit(CBlob@ this, CBlob@ b)
+{
 	if (b.hasTag("invincible")) {
 		return false;
 	}

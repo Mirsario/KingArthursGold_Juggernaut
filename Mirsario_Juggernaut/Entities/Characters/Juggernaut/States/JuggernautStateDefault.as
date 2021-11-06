@@ -8,6 +8,7 @@ namespace Juggernaut
 		{
 			
 		}
+		
 		void UpdateLogic(CBlob@ this)
 		{
 			JuggernautInfo@ juggernaut;
@@ -22,6 +23,7 @@ namespace Juggernaut
 				SetState(@this, @juggernaut, JuggernautStates::Grabbing);
 			}
 		}
+
 		void UpdateSprite(CSprite@ this)
 		{
 

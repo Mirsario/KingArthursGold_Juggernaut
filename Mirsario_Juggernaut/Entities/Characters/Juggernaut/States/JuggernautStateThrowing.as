@@ -56,6 +56,7 @@ namespace Juggernaut
 				this.Sync("extraSync", false);
 			}
 		}
+
 		void UpdateLogic(CBlob@ this)
 		{
 			JuggernautInfo@ juggernaut;
@@ -71,6 +72,7 @@ namespace Juggernaut
 				juggernaut.attacksDelayedUntil = getGameTime() + JuggernautVars::ThrowDelay;
 			}
 		}
+		
 		void UpdateSprite(CSprite@ this)
 		{
 

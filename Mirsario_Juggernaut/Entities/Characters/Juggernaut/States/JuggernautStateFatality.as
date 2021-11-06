@@ -14,6 +14,7 @@ namespace Juggernaut
 
 			juggernaut.wasFacingLeft = this.isFacingLeft();
 		}
+
 		void UpdateLogic(CBlob@ this)
 		{
 			JuggernautInfo@ juggernaut;
@@ -100,6 +101,7 @@ namespace Juggernaut
 				}
 			}
 		}
+		
 		void UpdateSprite(CSprite@ this)
 		{
 

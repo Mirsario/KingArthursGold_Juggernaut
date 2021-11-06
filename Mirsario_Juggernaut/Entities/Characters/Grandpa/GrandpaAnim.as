@@ -35,8 +35,8 @@ void onTick(CSprite@ this)
 	blob.SetFacingLeft(blob.getAimPos().x < pos.x);
 	
 	RunnerMoveVars@ moveVars;
-	if (!blob.get("moveVars", @moveVars))
-	{
+
+	if (!blob.get("moveVars", @moveVars)) {
 		return;
 	}
 }
@@ -44,7 +44,11 @@ void onTick(CSprite@ this)
 void DrawCursorAt(Vec2f position, string& in filename)
 {
 	position = getMap().getAlignedWorldPos(position);
-	if (position == Vec2f_zero) return;
+
+	if (position == Vec2f_zero) {
+		return;
+	}
+
 	position = getDriver().getScreenPosFromWorldPos(position - Vec2f(1, 1));
 	GUI::DrawIcon(filename, position, getCamera().targetDistance * getDriver().getResolutionScaleFactor());
 }
@@ -56,20 +60,19 @@ const string cursorTexture = "Entities/Characters/Sprites/TileCursor.png";
 void onRender(CSprite@ this)
 {
 	CBlob@ blob = this.getBlob();
-	if (!blob.isMyPlayer())
-	{
+	
+	if (!blob.isMyPlayer()) {
 		return;
 	}
-	if (getHUD().hasButtons())
-	{
+
+	if (getHUD().hasButtons()) {
 		return;
 	}
 }
 
 void onGib(CSprite@ this)
 {
-	if (g_kidssafe)
-	{
+	if (g_kidssafe) {
 		return;
 	}
 }

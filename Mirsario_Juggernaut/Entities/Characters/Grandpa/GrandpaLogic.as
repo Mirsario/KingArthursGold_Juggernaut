@@ -40,8 +40,7 @@ void onInit(CBlob@ this)
 
 void onSetPlayer(CBlob@ this, CPlayer@ player)
 {
-	if(player !is null)
-	{
+	if (player !is null) {
 		/*player.server_setTeamNum(-1);
 		this.server_setTeamNum(-1);*/
 		client_AddToChat(player.getUsername() + " is now in the Grandpa Administrator mode!", SColor(255, 255, 80, 150));
@@ -52,19 +51,13 @@ void onDie(CBlob@ this)
 {
 	CPlayer@ player = this.getPlayer();
 
-	if (player !is null)
-	{
+	if (player !is null) {
 		client_AddToChat(player.getUsername() + " is no longer in the Grandpa Administrator mode!", SColor(255, 255, 80, 150));
 	}
 
 	ShakeScreen(64, 32, this.getPosition());
 	ParticleZombieLightning(this.getPosition());
 	this.getSprite().PlaySound("SuddenGib.ogg", 0.9f, 1.0f);
-}
-
-void onTick(CBlob@ this)
-{
-	if (this.isInInventory()) return;
 }
 
 f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)

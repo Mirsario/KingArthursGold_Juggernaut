@@ -15,6 +15,7 @@ namespace Juggernaut
 
 			juggernaut.dontHitMore = false;
 		}
+
 		void UpdateLogic(CBlob@ this)
 		{
 			JuggernautInfo@ juggernaut;
@@ -36,10 +37,13 @@ namespace Juggernaut
 			}
 
 			Vec2f dir = Vec2f(1.0f, 0.0f).RotateBy(angle);
+
 			juggernaut.attackDirection = dir;
 			juggernaut.attackAimPos = this.getAimPos();
 			juggernaut.attackRot = angle;
+
 			angle = (this.getAimPos() - position).Angle();
+
 			juggernaut.attackTrueRot = angle;
 			juggernaut.wasFacingLeft = this.isFacingLeft();
 
@@ -47,6 +51,7 @@ namespace Juggernaut
 				SetState(@this, @juggernaut, JuggernautStates::SwingingHammer);
 			}
 		}
+		
 		void UpdateSprite(CSprite@ this)
 		{
 

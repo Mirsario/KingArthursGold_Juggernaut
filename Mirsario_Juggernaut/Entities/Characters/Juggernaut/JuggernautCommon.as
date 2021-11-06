@@ -24,7 +24,8 @@ void SetupJuggernautStates()
 	states.insertLast(@Juggernaut::JuggernautStateFatality());
 }
 
-enum JuggernautStates {
+enum JuggernautStates
+{
 	Default = 0,
 	Stunned,
 	Charging,
@@ -35,7 +36,8 @@ enum JuggernautStates {
 	Fatality
 }
 
-namespace JuggernautVars {
+namespace JuggernautVars
+{
 	const uint8 ChargeTime = 20;
 	const uint8 AttackTime = 20;
 	const uint8 GrabTime = 12;
@@ -52,7 +54,8 @@ namespace JuggernautVars {
 	const float GrabDistance = 14.0f;
 }
 
-shared class JuggernautInfo {
+shared class JuggernautInfo
+{
 	u8 stun;
 	u32 stateStartTime;
 	//u32 stateTime;

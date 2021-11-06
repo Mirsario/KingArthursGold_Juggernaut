@@ -13,78 +13,81 @@ void onInit(CBrain@ this)
 
 void onTick(CBrain@ this)
 {
-	SearchTarget(this,true,true);
+	SearchTarget(this, true, true);
 
-	CBlob @blob=	this.getBlob();
-	CBlob @target=	this.getTarget();
+	CBlob @blob = this.getBlob();
+	CBlob @target = this.getTarget();
 	
 	JuggernautInfo@ juggernaut;
-	if(!blob.get("JuggernautInfo",@juggernaut)) {
+
+	if (!blob.get("JuggernautInfo", @juggernaut)) {
 		return;
 	}
 	
-	const float attackModeDistance=	30.0f;
+	const float attackModeDistance = 30.0f;
 	
-	//if(sv_test)
+	//if (sv_test)
 	//	return;
 	//logic for target
 
-	this.getCurrentScript().tickFrequency=	1;
+	this.getCurrentScript().tickFrequency = 1;
 	blob.setKeyPressed(key_action1, false);
 	blob.setKeyPressed(key_action2, false);
 	
-	u8 strategy=	blob.get_u8("strategy");
-	if(juggernaut.state==JuggernautStates::Holding) {
-		if(target is null || LoseTarget(this,target)) {
-			blob.setKeyPressed(key_action2,true);
-			strategy=	Strategy::idle;
-		}else{
-			blob.setAimPos(target.getPosition()+Vec2f(0.0f,-32.0f));
-			blob.setKeyPressed(key_action1,true);
+	u8 strategy = blob.get_u8("strategy");
+
+	if (juggernaut.state == JuggernautStates::Holding) {
+		if (target is null || LoseTarget(this, target)) {
+			blob.setKeyPressed(key_action2, true);
+			strategy = Strategy::idle;
+		} else {
+			blob.setAimPos(target.getPosition() + Vec2f(0.0f,-32.0f));
+			blob.setKeyPressed(key_action1, true);
 		}
-	}else if(target !is null) {
-		
-	
+	}else if (target !is null) {
 		f32 distance;
-		const bool visibleTarget=	isVisible(blob,target,distance);
-		if(distance<attackModeDistance) { // || (!visibleTarget && blob.isOnWall())){
-			strategy=	Strategy::attacking;
-		}else{
-			strategy=	Strategy::chasing;
+		const bool visibleTarget = isVisible(blob, target, distance);
+
+		if (distance < attackModeDistance) { // || (!visibleTarget && blob.isOnWall())){
+			strategy = Strategy::attacking;
+		} else {
+			strategy = Strategy::chasing;
 		}
 
-		if(strategy==Strategy::chasing) {
+		if (strategy == Strategy::chasing) {
 			DefaultChaseBlob(blob,target);
-		}else if(strategy==Strategy::attacking) {
+		} else if (strategy == Strategy::attacking) {
 			AttackBlob(blob,target);
 		}
 		
-		if(LoseTarget(this,target)) {
-			strategy=	Strategy::idle;
+		if (LoseTarget(this,target)) {
+			strategy = Strategy::idle;
 		}
-
 	}
-	blob.set_u8("strategy",strategy);
+
+	blob.set_u8("strategy", strategy);
 
 	FloatInWater(blob);
 }
 
 
-void AttackBlob(CBlob@ blob,CBlob @target)
+void AttackBlob(CBlob@ blob, CBlob @target)
 {
 	JuggernautInfo@ juggernaut;
-	if(!blob.get("JuggernautInfo",@juggernaut)) {
+
+	if (!blob.get("JuggernautInfo", @juggernaut)) {
 		return;
 	}
-	Vec2f mypos=	blob.getPosition();
-	Vec2f targetPos=	target.getPosition();
-	Vec2f targetVector=	targetPos-mypos;
-	f32 targetDistance=	targetVector.Length();
-	const s32 difficulty=	blob.get_s32("difficulty");
 
-	if(targetDistance>blob.getRadius()+25.0f){
-		//if(!isFriendAheadOfMe(blob,target)){
-			Chase(blob,target);
+	Vec2f mypos = blob.getPosition();
+	Vec2f targetPos = target.getPosition();
+	Vec2f targetVector = targetPos-mypos;
+	f32 targetDistance = targetVector.Length();
+	const s32 difficulty = blob.get_s32("difficulty");
+
+	if (targetDistance > blob.getRadius() + 25.0f){
+		//if (!isFriendAheadOfMe(blob, target)){
+		Chase(blob,target);
 		//}
 	}
 
@@ -93,25 +96,20 @@ void AttackBlob(CBlob@ blob,CBlob @target)
 	//aim always at enemy
 	blob.setAimPos(targetPos);
 
-	const u32 gametime=	getGameTime();
+	const u32 gametime = getGameTime();
+	bool shouldGrab = targetDistance < 30.0f;
 
-	if(target.isKeyPressed(key_action1)) //enemy is attacking me
-	{
-		
-	}
-	
-	bool shouldGrab=	targetDistance<30.0f;
-	if(!target.isKeyPressed(key_action1)) {
-		shouldGrab=		shouldGrab && (target.get_u8("knocked")>0 || target.getHealth()<=1.25f && XORRandom(3)!=0);
+	if (!target.isKeyPressed(key_action1)) {
+		shouldGrab = shouldGrab && (target.get_u8("knocked") > 0 || target.getHealth() <= 1.25f && XORRandom(3) != 0);
 	}
 
-	if(shouldGrab) {
+	if (shouldGrab) {
 		//Should try grabbing instead
-		blob.setKeyPressed(key_action2,true);
-		blob.setKeyPressed(key_action1,false);
+		blob.setKeyPressed(key_action2, true);
+		blob.setKeyPressed(key_action1, false);
 	}else{
 		//Hammer smash!
-		blob.setKeyPressed(key_action1,true);
+		blob.setKeyPressed(key_action1, true);
 	}
 }
 

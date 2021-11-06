@@ -14,6 +14,7 @@ namespace Juggernaut
 			
 			juggernaut.attacksDelayedUntil = getGameTime() + JuggernautVars::OnPickupAttackDelay;
 		}
+
 		void UpdateLogic(CBlob@ this)
 		{
 			JuggernautInfo@ juggernaut;
@@ -33,6 +34,7 @@ namespace Juggernaut
 				SetState(@this, @juggernaut, JuggernautStates::Fatality);
 			}
 		}
+		
 		void UpdateSprite(CSprite@ this)
 		{
 

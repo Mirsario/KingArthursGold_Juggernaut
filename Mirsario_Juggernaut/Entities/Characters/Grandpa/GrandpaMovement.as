@@ -15,13 +15,13 @@ void onTick(CMovement@ this)
 {
 	CBlob@ blob = this.getBlob();
 	RunnerMoveVars@ moveVars;
-	if (!blob.get("moveVars", @moveVars))
-	{
+
+	if (!blob.get("moveVars", @moveVars)) {
 		return;
 	}
 
 	const bool left = blob.isKeyPressed(key_left);
-	const bool right	= blob.isKeyPressed(key_right);
+	const bool right = blob.isKeyPressed(key_right);
 	const bool up = blob.isKeyPressed(key_up);
 	const bool down = blob.isKeyPressed(key_down);
 
@@ -39,23 +39,19 @@ void onTick(CMovement@ this)
 	shape.SetGravityScale(0.0f);
 	Vec2f ladderforce;
 
-	if (up)
-	{
+	if (up) {
 		ladderforce.y -= 0.4f;
 	}
 
-	if (down)
-	{
+	if (down) {
 		ladderforce.y += 0.4f;
 	}
 
-	if (left)
-	{
+	if (left) {
 		ladderforce.x -= 0.4f;
 	}
 
-	if (right)
-	{
+	if (right) {
 		ladderforce.x += 0.4f;
 	}
 
@@ -63,7 +59,6 @@ void onTick(CMovement@ this)
 	vel2 *= 0.90f;
 	blob.setVelocity(vel2);
 	blob.AddForce(ladderforce * moveVars.overallScale * 100.0f);
-	
 
 	moveVars.jumpCount = -1;
 	moveVars.fallCount = -1;
@@ -73,11 +68,11 @@ void onTick(CMovement@ this)
 	return;
 }
 
-//some specific helpers
+// some specific helpers
 
 const f32 offsetheight = -1.2f;
 
-//cleanup all vars here - reset clean slate for next frame
+// cleanup all vars here - reset clean slate for next frame
 
 void CleanUp(CMovement@ this, CBlob@ blob, RunnerMoveVars@ moveVars)
 {
@@ -96,19 +91,21 @@ bool checkForSolidMapBlob(CMap@ map, Vec2f pos)
 	
 	CBlob@ _tempBlob; CShape@ _tempShape;
 	@_tempBlob = map.getBlobAtPosition(pos);
-	if (_tempBlob !is null && _tempBlob.isCollidable())
-	{
+
+	if (_tempBlob !is null && _tempBlob.isCollidable()) {
 		@_tempShape = _tempBlob.getShape();
-		if (_tempShape.isStatic())
-		{
-			if (_tempBlob.getName() == "wooden_platform")
-			{
+
+		if (_tempShape.isStatic()) {
+			if (_tempBlob.getName() == "wooden_platform") {
 				f32 angle = _tempBlob.getAngleDegrees();
-				if (angle > 180)
+				
+				if (angle > 180) {
 					angle -= 360;
+				}
+
 				angle = Maths::Abs(angle);
-				if (angle < 30 || angle > 150)
-				{
+				
+				if (angle < 30 || angle > 150) {
 					return false;
 				}
 			}

@@ -27,6 +27,7 @@ namespace Juggernaut
 
 			this.AddForce(force);
 		}
+
 		void UpdateLogic(CBlob@ this)
 		{
 			JuggernautInfo@ juggernaut;
@@ -53,6 +54,7 @@ namespace Juggernaut
 				DoAttack(this, 2.0f, juggernaut, 100.0f, HittersNew::hammer, tick);
 			}
 		}
+
 		void UpdateSprite(CSprite@ this)
 		{
 
@@ -85,6 +87,7 @@ namespace Juggernaut
 			//get the actual aim angle
 			Vec2f blobPos = this.getPosition();
 			Vec2f vel = this.getVelocity();
+			
 			Vec2f thinghy(1, 0);
 
 			thinghy.RotateBy(aimangle);

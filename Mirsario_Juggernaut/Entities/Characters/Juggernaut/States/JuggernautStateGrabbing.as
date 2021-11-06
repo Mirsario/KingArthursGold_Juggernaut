@@ -27,8 +27,8 @@ namespace Juggernaut
 			juggernaut.attackDirection = Vec2f(1.0f, 0.0f).RotateBy(angle);
 			juggernaut.attackAimPos = this.getAimPos();
 			juggernaut.attackRot = angle;
-			angle = (this.getAimPos() - position).Angle();
-			juggernaut.attackTrueRot = angle;
+
+			juggernaut.attackTrueRot = angle = (this.getAimPos() - position).Angle();
 
 			juggernaut.wasFacingLeft = this.isFacingLeft();
 			juggernaut.dontHitMore = false;
@@ -37,6 +37,7 @@ namespace Juggernaut
 				Sound::Play("/ArgLong", position);
 			}
 		}
+
 		void UpdateLogic(CBlob@ this)
 		{
 			JuggernautInfo@ juggernaut;
@@ -96,15 +97,15 @@ namespace Juggernaut
 
 				string victimType = victim.getConfig();
 
-				if(victimType != "knight" && victimType != "crossbowman" && victimType != "trader") {
+				if (victimType != "knight" && victimType != "crossbowman" && victimType != "trader") {
 					continue;
 				}
 
-				if(victim.getTeamNum() == this.getTeamNum()) {
+				if (victim.getTeamNum() == this.getTeamNum()) {
 					continue;
 				}
 
-				if(victim.hasTag("dead")) {
+				if (victim.hasTag("dead")) {
 					continue;
 				}
 
@@ -157,6 +158,7 @@ namespace Juggernaut
 				break;
 			}
 		}
+		
 		void UpdateSprite(CSprite@ this)
 		{
 			
