@@ -4,19 +4,19 @@
 const u32 NumTracks = 13;
 
 const array<string> MusicList = {
-	MUSIC_PATH + "/DooM/BetweenLevels.ogg",
-	MUSIC_PATH + "/DooM/ByeByeAmericanPie.ogg",
-	MUSIC_PATH + "/DooM/HellKeep.ogg",
-	MUSIC_PATH + "/DooM/HidingTheSecrets.ogg",
-	MUSIC_PATH + "/DooM/ImpSong.ogg",
-	MUSIC_PATH + "/DooM/IntermissionFromDOOM.ogg",
-	MUSIC_PATH + "/DooM/InTheDark.ogg",
-	MUSIC_PATH + "/DooM/IntoTheBeastsBelly.ogg",
-	MUSIC_PATH + "/DooM/KitchenAceAndTakingNames.ogg",
-	MUSIC_PATH + "/DooM/LetsKillAtWill.ogg",
-	MUSIC_PATH + "/DooM/OnTheHunt.ogg",
-	MUSIC_PATH + "/DooM/Sadistic.ogg",
-	MUSIC_PATH + "/DooM/SmellsLikeBurningCorpse.ogg"
+	MUSIC_PATH + "/Music/BetweenLevels.ogg",
+	MUSIC_PATH + "/Music/ByeByeAmericanPie.ogg",
+	MUSIC_PATH + "/Music/HellKeep.ogg",
+	MUSIC_PATH + "/Music/HidingTheSecrets.ogg",
+	MUSIC_PATH + "/Music/ImpSong.ogg",
+	MUSIC_PATH + "/Music/IntermissionFromDOOM.ogg",
+	MUSIC_PATH + "/Music/IntoTheBeastsBelly.ogg",
+	MUSIC_PATH + "/Music/KitchenAceAndTakingNames.ogg",
+	MUSIC_PATH + "/Music/LetsKillAtWill.ogg",
+	MUSIC_PATH + "/Music/OnTheHunt.ogg",
+	MUSIC_PATH + "/Music/Sadistic.ogg",
+	MUSIC_PATH + "/Music/ShawnsGotTheShotgun.ogg",
+	MUSIC_PATH + "/Music/SmellsLikeBurningCorpse.ogg"
 };
 
 void onInit(CBlob@ this)
