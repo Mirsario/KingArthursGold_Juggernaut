@@ -16,12 +16,9 @@ void onInit(CSprite@ this)
 void ManageCursors(CBlob@ this)
 {
 	// set cursor
-	if (getHUD().hasButtons())
-	{
+	if (getHUD().hasButtons()) {
 		getHUD().SetDefaultCursor();
-	}
-	else
-	{
+	} else {
 		// set cursor
 		getHUD().SetCursorImage("Entities/Characters/Crossbowman/CrossbowmanCursor.png", Vec2f(32, 32));
 		getHUD().SetCursorOffset(Vec2f(-32, -32));
@@ -31,8 +28,9 @@ void ManageCursors(CBlob@ this)
 
 void onRender(CSprite@ this)
 {
-	if (g_videorecording)
+	if (g_videorecording) {
 		return;
+	}
 
 	CBlob@ blob = this.getBlob();
 	CPlayer@ player = blob.getPlayer();
@@ -46,8 +44,7 @@ void onRender(CSprite@ this)
 	const u8 type = getArrowType(blob);
 	u8 arrow_frame = 0;
 
-	if (type != ArrowType::normal)
-	{
+	if (type != ArrowType::normal) {
 		arrow_frame = type;
 	}
 

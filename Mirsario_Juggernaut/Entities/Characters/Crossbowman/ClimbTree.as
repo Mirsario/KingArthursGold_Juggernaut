@@ -1,5 +1,5 @@
 void onInit(CBlob@ this)
-{
+ {
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().runFlags |= Script::tick_not_onladder;
 	this.getCurrentScript().runFlags |= Script::tick_not_onground;
@@ -7,11 +7,12 @@ void onInit(CBlob@ this)
 }
 
 void onTick(CBlob@ this)
-{
-	if (!this.isKeyPressed(key_up) || this.isKeyPressed(key_down)) { return; }
+ {
+	if (!this.isKeyPressed(key_up) || this.isKeyPressed(key_down)) {
+		return;
+	}
 
-	if (this.getMap().getSectorAtPosition(this.getPosition(), "tree") !is null)
-	{
+	if (this.getMap().getSectorAtPosition(this.getPosition(), "tree") !is null) {
 		this.getShape().getVars().onladder = true;
 	}
 }
