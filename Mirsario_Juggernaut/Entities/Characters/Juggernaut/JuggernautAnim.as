@@ -1,11 +1,26 @@
 #include "JuggernautCommon.as";
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
+#include "RunnerTextures.as"
 #include "Knocked.as";
 #include "ModPath.as";
 
-void onInit(CSprite@ this) {
+void onInit(CSprite@ this)
+{
+	LoadSprites(this);
+}
+
+void onPlayerInfoChanged(CSprite@ this)
+{
+	LoadSprites(this);
+}
+
+void LoadSprites(CSprite@ this)
+{
 	CBlob@ blob = this.getBlob();
+
+	blob.setSexNum(0);
+	ensureCorrectRunnerTexture(this, "juggernaut", "Juggernaut");
 
 	this.RemoveSpriteLayer("background");
 	CSpriteLayer@ background = this.addSpriteLayer("background", "JuggernautBackground.png", 64, 64, blob.getTeamNum(), 0);
@@ -134,7 +149,8 @@ void onInit(CSprite@ this) {
 	blob.set_u16("teamOnSpawn", blob.getTeamNum());
 }
 
-void onTick(CSprite@ this) {
+void onTick(CSprite@ this)
+{
 	CBlob@ blob = this.getBlob();
 
 	if (blob.get_u16("teamOnSpawn") != blob.getTeamNum()) {
@@ -360,12 +376,14 @@ void onTick(CSprite@ this) {
 	foreground.SetFacingLeft(this.isFacingLeft());
 }
 
-void onGib(CSprite@ this) {
+void onGib(CSprite@ this)
+{
 
 }
 
 // render cursors
-void DrawCursorAt(Vec2f position, string &in filename) {
+void DrawCursorAt(Vec2f position, string &in filename)
+{
 	position = getMap().getAlignedWorldPos(position);
 
 	if (position == Vec2f_zero) {
@@ -379,7 +397,8 @@ void DrawCursorAt(Vec2f position, string &in filename) {
 
 const string CursorTexture = "Entities/Characters/Sprites/TileCursor.png";
 
-void onRender(CSprite@ this) {
+void onRender(CSprite@ this)
+{
 	CBlob@ blob = this.getBlob();
 
 	if (!blob.isMyPlayer()) {

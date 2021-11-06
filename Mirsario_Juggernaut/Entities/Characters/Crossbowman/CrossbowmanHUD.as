@@ -3,7 +3,7 @@
 #include "CrossbowmanCommon.as";
 #include "ActorHUDStartPos.as";
 
-const string iconsFilename = "Entities/Characters/Crossbowman/CrossbowmanIcons.png";
+const string iconsFilename = "Entities/Characters/Archer/ArcherIcons.png";
 const int slotsSize = 6;
 
 void onInit(CSprite@ this)
@@ -44,7 +44,7 @@ void onRender(CSprite@ this)
 	const u8 type = getArrowType(blob);
 	u8 arrow_frame = 0;
 
-	if (type != ArrowType::normal) {
+	if (type != Crossbowman::ArrowType::Normal) {
 		arrow_frame = type;
 	}
 

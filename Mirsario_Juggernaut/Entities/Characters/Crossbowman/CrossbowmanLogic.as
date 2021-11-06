@@ -13,18 +13,15 @@
 #include "ParticleSparks.as";
 
 const int FLETCH_COOLDOWN = 45;
-const int PICKUP_COOLDOWN = 15;
 const int fletch_num_arrows = 1;
-const int STAB_DELAY = 10;
-const int STAB_TIME = 22;
 
 void onInit(CBlob@ this) {
 	CrossbowmanInfo crossbowman;
 	this.set("crossbowmanInfo", @crossbowman);
 
-	this.set_s8("charge_time", 0);
-	this.set_u8("state", CrossbowmanParams::ready);
-	this.set_bool("has_arrow", false);
+	this.set_s8("chargeTime", 0);
+	this.set_u8("state", Crossbowman::State::Ready);
+	this.set_bool("hasArrow", false);
 	this.set_f32("gib health", - 1.5f);
 	this.Tag("player");
 	this.Tag("flesh");
@@ -60,8 +57,8 @@ void onSetPlayer(CBlob@ this, CPlayer@ player) {
 void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVars) {
 	CSprite@ sprite = this.getSprite();
 	bool isMyPlayer = this.isMyPlayer();
-	bool hasArrow = crossbowman.has_arrow;
-	s8 charge_time = crossbowman.charge_time;
+	bool hasArrow = crossbowman.hasArrow;
+	s8 chargeTime = crossbowman.chargeTime;
 	u8 state = crossbowman.state;
 	Vec2f pos = this.getPosition();
 	
@@ -76,61 +73,61 @@ void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVa
 
 			if (!hasArrow) {
 				 // set back to default
-				for (uint i = 0; i < ArrowType::count; i++ ) {
+				for (uint i = 0; i < Crossbowman::ArrowType::Count; i++ ) {
 					hasArrow = hasArrows(this, i);
 					
 					if (hasArrow) {
-						crossbowman.arrow_type = i;
+						crossbowman.arrowType = i;
 						break;
 					}
 				}
 			}
 		}
 		
-		this.set_bool("has_arrow", hasArrow);
-		this.Sync("has_arrow", false);
+		this.set_bool("hasArrow", hasArrow);
+		this.Sync("hasArrow", false);
 
-		crossbowman.stab_delay = 0;
+		crossbowman.stabDelay = 0;
 	}
 
-	if (state == CrossbowmanParams::ready) {
+	if (state == Crossbowman::State::Ready) {
 		if (mouseLeft) {
 			moveVars.canVault = false;
 
 			hasArrow = hasArrows(this);
 
 			if (!hasArrow) {
-				crossbowman.arrow_type = ArrowType::normal;
+				crossbowman.arrowType = Crossbowman::ArrowType::Normal;
 				hasArrow = hasArrows(this);
 			}
 			if (isMyPlayer && mouseLeftDown) {
-				this.set_bool("has_arrow", hasArrow);
-				this.Sync("has_arrow", false);
+				this.set_bool("hasArrow", hasArrow);
+				this.Sync("hasArrow", false);
 			}
 			
 			if (!hasArrow) {
 				if (mouseLeftDown) {
 					if (isMyPlayer && !this.wasKeyPressed(key_action1) && !this.hasTag("noLMB")) {
-						Sound::Play("Entities / Characters / Sounds / NoAmmo.ogg");
+						Sound::Play("Entities/Characters/Sounds/NoAmmo.ogg");
 					}
 					
-					state = CrossbowmanParams::firing;
+					state = Crossbowman::State::Firing;
 					crossbowman.stateTime = 10;
 				}
 			} else if (mouseLeftDown) {
 				if (crossbowman.needsReload) {
-					state = CrossbowmanParams::reloading;
-					crossbowman.stateTime = CrossbowmanParams::reloadTime;
-					this.getSprite().PlaySound("BowCharge1.ogg");
+					state = Crossbowman::State::Reloading;
+					crossbowman.stateTime = Crossbowman::ReloadTime;
+					this.getSprite().PlaySound("CrossbowCharge1.ogg");
 				} else {
-					state = CrossbowmanParams::firing;
+					state = Crossbowman::State::Firing;
 					crossbowman.needsReload = true;
-					crossbowman.stateTime = CrossbowmanParams::postFireDelay;
-					ClientFire(this, charge_time, hasArrow, crossbowman.arrow_type);
+					crossbowman.stateTime = Crossbowman::PostFireDelay;
+					ClientFire(this, chargeTime, hasArrow, crossbowman.arrowType);
 				}
 			}
 		} else if (mouseRightDown) {
-			state = CrossbowmanParams::stabbing;
+			state = Crossbowman::State::Stabbing;
 			crossbowman.stateTime = 20;
 			
 			f32 angle = -((this.getAimPos() - pos).getAngleDegrees());
@@ -140,19 +137,19 @@ void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVa
 			}
 			
 			Vec2f dir = Vec2f(1.0f, 0.0f).RotateBy(angle);
-			crossbowman.attackDir = dir;
-			crossbowman.attackRot = angle;
+			crossbowman.attackDirection = dir;
+			crossbowman.attackRotation = angle;
 			crossbowman.dontHitMore = false;
 			
 			this.getSprite().PlaySound("KnifeStab.ogg");
 		}
-	} else if (state == CrossbowmanParams::firing) {
+	} else if (state == Crossbowman::State::Firing) {
 		crossbowman.stateTime--;
 		
 		if (crossbowman.stateTime <= 0) {
-			state = CrossbowmanParams::ready;
+			state = Crossbowman::State::Ready;
 		}
-	} else if (state == CrossbowmanParams::reloading) {
+	} else if (state == Crossbowman::State::Reloading) {
 		moveVars.canVault = false;
 		moveVars.jumpFactor *= 0.25f;
 		moveVars.walkFactor = 0.15f;
@@ -161,9 +158,9 @@ void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVa
 		
 		if (crossbowman.stateTime <= 0) {
 			crossbowman.needsReload = false;
-			state = CrossbowmanParams::ready;
+			state = Crossbowman::State::Ready;
 		}
-	} else if (state == CrossbowmanParams::stabbing) {
+	} else if (state == Crossbowman::State::Stabbing) {
 		moveVars.canVault = false;
 		moveVars.jumpFactor *= 0.33f;
 		moveVars.walkFactor = 0.66f;
@@ -172,11 +169,11 @@ void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVa
 			 // Grab
 			const float Range = 16.0f;
 
-			Vec2f dir = crossbowman.attackDir;
+			Vec2f dir = crossbowman.attackDirection;
 			Vec2f position = this.getPosition();
 			HitInfo@ [] hitInfos;
 
-			bool blobHit = getMap().getHitInfosFromArc(position, crossbowman.attackRot, 30.0f, Range, this, @hitInfos);
+			bool blobHit = getMap().getHitInfosFromArc(position, crossbowman.attackRotation, 30.0f, Range, this, @hitInfos);
 
 			if (blobHit) {
 				for (u32 i = 0;i < hitInfos.length;i ++ ) {
@@ -192,7 +189,7 @@ void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVa
 
 					if (blob.getConfig() == "knight") {
 						if (blockAttack(blob, dir, 0.0f)) {
-							Sound::Play("Entities / Characters / Knight / ShieldHit.ogg", pos);
+							Sound::Play("Entities/Characters/Knight/ShieldHit.ogg", pos);
 							sparks(pos, - dir.Angle(), Maths::Max(10.0f * 0.05f, 1.0f));
 							crossbowman.dontHitMore = true;
 							break;
@@ -216,7 +213,7 @@ void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVa
 		crossbowman.stateTime--;
 		
 		if (crossbowman.stateTime <= 0) {
-			state = CrossbowmanParams::ready;
+			state = Crossbowman::State::Ready;
 		}
 	}
 	
@@ -225,9 +222,9 @@ void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVa
 	 // safe disable bomb light
 
 	if (this.wasKeyPressed(key_action1) && !this.isKeyPressed(key_action1) && !this.hasTag("noLMB")) {
-		const u8 type = crossbowman.arrow_type;
+		const u8 type = crossbowman.arrowType;
 		
-		if (type == ArrowType::bomb) {
+		if (type == Crossbowman::ArrowType::Bomb) {
 			BombFuseOff(this);
 		}
 	}
@@ -240,10 +237,10 @@ void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVa
 		if (!getHUD().hasButtons()) {
 			int frame = 0;
 			
-			if (crossbowman.state == CrossbowmanParams::reloading) {
-				frame = 8 - Maths::Round((f32(crossbowman.stateTime) / f32(CrossbowmanParams::reloadTime)) * 7.0f);
+			if (crossbowman.state == Crossbowman::State::Reloading) {
+				frame = 8 - Maths::Round((f32(crossbowman.stateTime) / f32(Crossbowman::ReloadTime)) * 7.0f);
 			} else {
-				if (crossbowman.needsReload || crossbowman.state == CrossbowmanParams::stabbing) {
+				if (crossbowman.needsReload || crossbowman.state == Crossbowman::State::Stabbing) {
 					frame = 0;
 				} else {
 					frame = 9;
@@ -261,14 +258,14 @@ void ManageBow(CBlob@ this, CrossbowmanInfo@ crossbowman, RunnerMoveVars@ moveVa
 
 		 // pick up arrow
 
-		if (crossbowman.fletch_cooldown > 0) {
-			crossbowman.fletch_cooldown--;
+		if (crossbowman.fletchCooldown > 0) {
+			crossbowman.fletchCooldown--;
 		}
 	}
 	
-	crossbowman.charge_time = charge_time;
+	crossbowman.chargeTime = chargeTime;
 	crossbowman.state = state;
-	crossbowman.has_arrow = hasArrow;
+	crossbowman.hasArrow = hasArrow;
 }
 
 void onTick(CBlob@ this) {
@@ -280,7 +277,7 @@ void onTick(CBlob@ this) {
 
 	if (getKnocked(this) > 0) {
 		crossbowman.state = 0;
-		crossbowman.charge_time = 0;
+		crossbowman.chargeTime = 0;
 		return;
 	}
 
@@ -303,15 +300,15 @@ bool canSend(CBlob@ this) {
 	return(this.isMyPlayer() || this.getPlayer() is null || this.getPlayer().isBot());
 }
 
-void ClientFire(CBlob@ this, const s8 charge_time, const bool hasArrow, const u8 arrow_type) {
+void ClientFire(CBlob@ this, const s8 chargeTime, const bool hasArrow, const u8 arrowType) {
 	 // time to fire!
 	if (hasArrow && canSend(this)) {  // client - logic
-		f32 arrowspeed = CrossbowmanParams::shoot_max_vel;
-		ShootArrow(this, this.getPosition() + Vec2f(0.0f, - 2.0f), this.getAimPos() + Vec2f(0.0f, - 2.0f), arrowspeed, arrow_type);
+		f32 arrowspeed = Crossbowman::ShootMaxVelocity;
+		ShootArrow(this, this.getPosition() + Vec2f(0.0f, - 2.0f), this.getAimPos() + Vec2f(0.0f, - 2.0f), arrowspeed, arrowType);
 	}
 }
 
-void ShootArrow(CBlob @this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, const u8 arrow_type) {
+void ShootArrow(CBlob @this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, const u8 arrowType) {
 	if (canSend(this)) {
 		 // player or bot
 		Vec2f arrowVel = (aimpos - arrowPos);
@@ -321,7 +318,7 @@ void ShootArrow(CBlob @this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, const
 		CBitStream params;
 		params.write_Vec2f(arrowPos);
 		params.write_Vec2f(arrowVel);
-		params.write_u8(arrow_type);
+		params.write_u8(arrowType);
 
 		this.SendCommand(this.getCommandID("shoot arrow"), params);
 	}
@@ -395,7 +392,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params) {
 			return;
 		}
 		
-		crossbowman.arrow_type = arrowType;
+		crossbowman.arrowType = arrowType;
 
 		 // return to normal arrow - server didnt have this synced
 		if (!hasArrows(this, arrowType)) {
@@ -406,10 +403,10 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params) {
 			CreateArrow(this, arrowPos, arrowVel, arrowType);
 		}
 		
-		this.getSprite().PlaySound("BowFire4.ogg");
+		this.getSprite().PlaySound("CrossbowFire4.ogg");
 		this.TakeBlob(arrowTypeNames[ arrowType ], 1);
 
-		crossbowman.fletch_cooldown = FLETCH_COOLDOWN; // just don't allow shoot + make arrow
+		crossbowman.fletchCooldown = FLETCH_COOLDOWN; // just don't allow shoot + make arrow
 	}
 	else if (cmd == this.getCommandID("pickup arrow")) {
 		CBlob@ arrow = getPickupArrow(this);
@@ -423,9 +420,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params) {
 					return;
 				}
 				
-				const u8 arrowType = crossbowman.arrow_type;
+				const u8 arrowType = crossbowman.arrowType;
 				
-				if (arrowType == ArrowType::bomb) {
+				if (arrowType == Crossbowman::ArrowType::Bomb) {
 					arrow.set_u16("follow", 0); // this is already synced, its in command.
 					arrow.setPosition(this.getPosition());
 					return;
@@ -447,7 +444,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params) {
 				}
 			}
 			
-			this.getSprite().PlaySound("Entities / Items / Projectiles / Sounds / ArrowHitGround.ogg");
+			this.getSprite().PlaySound("Entities/Items/Projectiles/Sounds/ArrowHitGround.ogg");
 		}
 	}
 	else if (cmd == this.getCommandID("cycle")) { // from standardcontrols
@@ -458,7 +455,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params) {
 			return;
 		}
 		
-		u8 type = crossbowman.arrow_type;
+		u8 type = crossbowman.arrowType;
 
 		int count = 0;
 		
@@ -471,10 +468,10 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params) {
 			}
 
 			if (this.getBlobCount(arrowTypeNames[type]) > 0) {
-				crossbowman.arrow_type = type;
+				crossbowman.arrowType = type;
 				
 				if (this.isMyPlayer()) {
-					Sound::Play(" / CycleInventory.ogg");
+					Sound::Play("/CycleInventory.ogg");
 				}
 				
 				break;
@@ -490,7 +487,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params) {
 		
 		for (uint i = 0; i < arrowTypeNames.length; i ++ ) {
 			if (cmd == this.getCommandID("pick " + arrowTypeNames[i])) {
-				crossbowman.arrow_type = i;
+				crossbowman.arrowType = i;
 				break;
 			}
 		}
@@ -513,7 +510,7 @@ void onCreateInventoryMenu(CBlob@ this, CBlob@ forBlob, CGridMenu @gridmenu) {
 		return;
 	}
 	
-	const u8 arrowSel = crossbowman.arrow_type;
+	const u8 arrowSel = crossbowman.arrowType;
 
 	if (menu !is null) {
 		menu.deleteAfterClick = false;
@@ -564,7 +561,7 @@ void onAddToInventory(CBlob@ this, CBlob@ blob) {
 		
 		for (uint i = 0; i < arrowTypeNames.length; i ++ ) {
 			if (itemname == arrowTypeNames[i]) {
-				crossbowman.arrow_type = i;
+				crossbowman.arrowType = i;
 			}
 		}
 	}
@@ -585,14 +582,14 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 					}
 				}
 				
-				this.getSprite().PlaySound("Entities / Items / Projectiles / Sounds / ArrowHitGround.ogg");
+				this.getSprite().PlaySound("Entities/Items/Projectiles/Sounds/ArrowHitGround.ogg");
 			} else {
 				this.getSprite().PlaySound("KnifeStab.ogg");
 			}
 		}
 
 		if (blockAttack(hitBlob, velocity, 0.0f)) {
-			this.getSprite().PlaySound(" / Stun", 1.0f, this.getSexNum() == 0 ? 1.0f : 2.0f);
+			this.getSprite().PlaySound("/Stun", 1.0f, this.getSexNum() == 0 ? 1.0f : 2.0f);
 			SetKnocked(this, 30);
 		}
 	}

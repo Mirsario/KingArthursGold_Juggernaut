@@ -4,6 +4,7 @@
 #include "FireParticle.as"
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
+#include "RunnerTextures.as"
 #include "Knocked.as";
 #include "ModPath.as";
 
@@ -15,13 +16,18 @@ void onInit(CSprite@ this)
 	LoadSprites(this);
 }
 
+void onPlayerInfoChanged(CSprite@ this)
+{
+	LoadSprites(this);
+}
+
 void LoadSprites(CSprite@ this)
 {
 	string texname = this.getBlob().getSexNum() == 0
 		? MOD_PATH + "/Classes/Crossbowman/CrossbowmanMale.png"
 		: MOD_PATH + "/Classes/Crossbowman/CrossbowmanFemale.png";
 
-	this.ReloadSprite(texname, this.getConsts().frameWidth, this.getConsts().frameHeight, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
+	ensureCorrectRunnerTexture(this, "crossbowman", "Crossbowman");
 	
 	Animation@ animStabbing = this.getAnimation("stabbing");
 
@@ -56,6 +62,7 @@ void LoadSprites(CSprite@ this)
 
 	if (backarm !is null) {
 		Animation@ anim = backarm.addAnimation("default", 0, false);
+
 		anim.AddFrame(17);
 		backarm.SetOffset(Vec2f(-1.0f, 5.0f + config_offset));
 		backarm.SetAnimation("default");
@@ -67,6 +74,7 @@ void LoadSprites(CSprite@ this)
 
 	if (arrow !is null) {
 		Animation@ anim = arrow.addAnimation("default", 0, false);
+
 		anim.AddFrame(1); //normal
 		anim.AddFrame(9); //water
 		anim.AddFrame(8); //fire
@@ -82,6 +90,7 @@ void LoadSprites(CSprite@ this)
 
 	if (quiver !is null) {
 		Animation@ anim = quiver.addAnimation("default", 0, false);
+
 		anim.AddFrame(67);
 		anim.AddFrame(66);
 		quiver.SetOffset(Vec2f(-10.0f, 2.0f + config_offset));
@@ -94,6 +103,7 @@ void LoadSprites(CSprite@ this)
 
 	if (shiny !is null) {
 		Animation@ anim = shiny.addAnimation("default", 2, true);
+
 		int[] frames = {0, 1, 2, 3};
 		anim.AddFrames(frames);
 		shiny.SetVisible(false);
@@ -163,10 +173,10 @@ void onTick(CSprite@ this)
 
 	// animations
 	const bool firing = true;//IsFiring(blob);
-	const bool left = blob.isKeyPressed(key_left) && crossbowman.state!=CrossbowmanParams::reloading;
-	const bool right = blob.isKeyPressed(key_right) && crossbowman.state!=CrossbowmanParams::reloading;
-	const bool up = blob.isKeyPressed(key_up) && crossbowman.state!=CrossbowmanParams::reloading;
-	const bool down = blob.isKeyPressed(key_down) && crossbowman.state!=CrossbowmanParams::reloading;
+	const bool left = blob.isKeyPressed(key_left) && crossbowman.state != Crossbowman::State::Reloading;
+	const bool right = blob.isKeyPressed(key_right) && crossbowman.state != Crossbowman::State::Reloading;
+	const bool up = blob.isKeyPressed(key_up) && crossbowman.state != Crossbowman::State::Reloading;
+	const bool down = blob.isKeyPressed(key_down) && crossbowman.state != Crossbowman::State::Reloading;
 	const bool inair = (!blob.isOnGround() && !blob.isOnLadder());
 	needs_shiny = false;
 	bool crouch = false;
@@ -186,7 +196,7 @@ void onTick(CSprite@ this)
 			this.SetAnimation("knocked");
 		}
 	}
-	else if (crossbowman.state==CrossbowmanParams::stabbing) {
+	else if (crossbowman.state == Crossbowman::State::Stabbing) {
 		this.SetAnimation("stabbing");
 	}
 	else if (blob.hasTag("seated")) {
@@ -196,8 +206,7 @@ void onTick(CSprite@ this)
 		if (inair) {
 			this.SetAnimation("shoot_jump");
 		}
-		else if ((left || right) ||
-				(blob.isOnLadder() && (up || down))) {
+		else if ((left || right) || (blob.isOnLadder() && (up || down))) {
 			this.SetAnimation("shoot_run");
 		}
 		else {
@@ -232,18 +241,18 @@ void onTick(CSprite@ this)
 			}
 		}
 	}
-	else if ((left || right) ||
-			(blob.isOnLadder() && (up || down))) {
+	else if ((left || right) || (blob.isOnLadder() && (up || down))) {
 		this.SetAnimation("run");
 	}
 	else {
-		if (down && this.isAnimationEnded())
+		if (down && this.isAnimationEnded()) {
 			crouch = true;
+		}
 
 		int direction;
 
-		if ((angle > 330 && angle < 361) || (angle > -1 && angle < 30) ||
-				(angle > 150 && angle < 210)) {
+		if ((angle > 330 && angle < 361) || (angle > -1 && angle < 30)
+		|| (angle > 150 && angle < 210)) {
 			direction = 0;
 		}
 		else if (aimpos.y < pos.y) {
@@ -312,8 +321,6 @@ void onTick(CSprite@ this)
 		blob.Untag("attack head");
 		blob.Untag("dead head");
 	}
-
-
 }
 
 void DrawBow(CSprite@ this, CBlob@ blob, CrossbowmanInfo@ crossbowman, f32 armAngle, const u8 arrowType, Vec2f armOffset)
@@ -322,17 +329,17 @@ void DrawBow(CSprite@ this, CBlob@ blob, CrossbowmanInfo@ crossbowman, f32 armAn
 	CSpriteLayer@ frontarm = this.getSpriteLayer("frontarm");
 	CSpriteLayer@ arrow = this.getSpriteLayer("held arrow");
 
-	if (crossbowman.state!=CrossbowmanParams::stabbing) {
+	if (crossbowman.state != Crossbowman::State::Stabbing) {
 		s8 frame = 0;
 		
-		if (crossbowman.state==CrossbowmanParams::reloading) {
+		if (crossbowman.state == Crossbowman::State::Reloading) {
 			if (this.isFacingLeft()) {
 				armAngle = -30.0f;
 			} else {
 				armAngle = 30.0f;
 			}
 			
-			frame = 4-Maths::Round((f32(crossbowman.stateTime)/f32(CrossbowmanParams::reloadTime))*4.0f);
+			frame = 4 - Maths::Round((f32(crossbowman.stateTime) / f32(Crossbowman::ReloadTime)) * 4.0f);
 		} else {
 			if (crossbowman.needsReload) {
 				frame = 0;
@@ -354,7 +361,7 @@ void DrawBow(CSprite@ this, CBlob@ blob, CrossbowmanInfo@ crossbowman, f32 armAn
 
 	// fire arrow particles
 
-	if (arrowType == ArrowType::fire && getGameTime() % 6 == 0) {
+	if (arrowType == Crossbowman::ArrowType::Fire && getGameTime() % 6 == 0) {
 		Vec2f offset = Vec2f(12.0f, 0.0f);
 
 		if (this.isFacingLeft()) {
@@ -369,8 +376,7 @@ void DrawBow(CSprite@ this, CBlob@ blob, CrossbowmanInfo@ crossbowman, f32 armAn
 void DrawBowEffects(CSprite@ this, CBlob@ blob, CrossbowmanInfo@ crossbowman, const u8 arrowType)
 {
 	// set fire light
-
-	if (arrowType == ArrowType::fire) {
+	if (arrowType == Crossbowman::ArrowType::Fire) {
 		if (IsFiring(blob)) {
 			blob.SetLight(true);
 			blob.SetLightRadius(blob.getRadius() * 2.0f);
