@@ -1,7 +1,7 @@
 ![Img](https://i.imgur.com/Hc8ElCj.png)
 
 # What's this?!
-Juggernaut is a fresh asymmetrical team deathmatch gamemode for King Arthur's Gold, where evil giants with hammers throw grandpas at knights.
+Juggernaut is an asymmetrical team deathmatch gamemode for King Arthur's Gold, where evil giants with hammers throw grandpas at knights.
 
 # License stuff
 All *original* code & art in this repository is licensed under the MIT license, which you can read in [LICENSE.md](https://github.com/Mirsario/KingArthursGold_Juggernaut/blob/master/LICENSE.md).
