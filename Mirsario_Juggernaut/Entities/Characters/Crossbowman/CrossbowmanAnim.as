@@ -85,7 +85,7 @@ void LoadSprites(CSprite@ this)
 	}
 
 	//quiver
-	this.RemoveSpriteLayer("quiver");
+	/*this.RemoveSpriteLayer("quiver");
 	CSpriteLayer@ quiver = this.addSpriteLayer("quiver", texname , 16, 16, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
 
 	if (quiver !is null) {
@@ -95,7 +95,7 @@ void LoadSprites(CSprite@ this)
 		anim.AddFrame(66);
 		quiver.SetOffset(Vec2f(-10.0f, 2.0f + config_offset));
 		quiver.SetRelativeZ(-0.1f);
-	}
+	}*/
 
 	// add shiny
 	this.RemoveSpriteLayer(shiny_layer);

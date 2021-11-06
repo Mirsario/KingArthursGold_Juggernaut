@@ -55,7 +55,7 @@ shared class CrossbowmanInfo
 		hasArrow = false;
 		stabDelay = 0;
 		fletchCooldown = 0;
-		arrowType = ArrowType::normal;
+		arrowType = Crossbowman::ArrowType::Normal;
 		attackDirection = Vec2f(0, 0);
 		attackRotation = 0.0f;
 	}

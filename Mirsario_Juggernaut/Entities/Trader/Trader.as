@@ -2,9 +2,7 @@
 
 #include "RunnerCommon.as"
 #include "Help.as";
-
 #include "Hitters.as";
-
 #include "TraderWantedList.as";
 
 //trader methods
