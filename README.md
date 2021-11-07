@@ -1,7 +1,7 @@
 ![Img](https://i.imgur.com/Hc8ElCj.png)
 
 # What's this?!
-Juggernaut is an asymmetrical team deathmatch gamemode for [King Arthur's Gold](https://store.steampowered.com/app/219830/King_Arthurs_Gold/), where evil giants with hammers throw grandpas at knights.
+Juggernaut is an asymmetrical team deathmatch gamemode for [King Arthur's Gold](https://store.steampowered.com/app/219830/King_Arthurs_Gold/), where evil giants with hammers throw grandpas at knights. Originally made in 2016, with source code only partially cleaned up.
 
 # How do I play this?
 There might be a juggernaut server online in KAG's server browser. If not, then..
