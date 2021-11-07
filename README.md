@@ -9,8 +9,11 @@ There might be a juggernaut server online in KAG's server browser. If not, then.
 # How do I host this?
 My recommendation is to clone this repository (or your fork of it) with git, and then create symlinks inside KAG's Mods folder to the folders inside the repo.
 On Windows, this can be done with something like this:
-`mklink /J "D:\Steam\steamapps\common\King Arthur's Gold\Mods\Mirsario_Juggernaut" "Mirsario_Juggernaut"`
-`mklink /J "D:\Steam\steamapps\common\King Arthur's Gold\Mods\Mirsario_JuggernautMusic" "Mirsario_JuggernautMusic"`
+```
+mklink /J "D:\Steam\steamapps\common\King Arthur's Gold\Mods\Mirsario_Juggernaut" "Mirsario_Juggernaut"`
+mklink /J "D:\Steam\steamapps\common\King Arthur's Gold\Mods\Mirsario_JuggernautMusic" "Mirsario_JuggernautMusic"
+```
+
 Then, add `Mirsario_Juggernaut` and `Mirsario_JuggernautMusic` to `mods.cfg`.
 
 # License stuff
