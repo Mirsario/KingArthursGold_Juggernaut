@@ -78,7 +78,17 @@ namespace Juggernaut
 			HitInfo@ [] hitInfos;
 			Vec2f hitPos;
 			bool mapHit = getMap().rayCastSolid(startPos, endPos, hitPos);
-			float length = (hitPos - startPos).Length();
+			Vec2f offset = hitPos - startPos;
+			
+			if (offset.x == 0.0f && offset.y == 0.0f) {
+				return;
+			}
+			
+			float length = offset.Length();
+			
+			if (length == 0.0f) {
+				return;
+			}
 
 			bool blobHit = getMap().getHitInfosFromRay(startPos, angle, length, this, @hitInfos);
 
